@@ -32,7 +32,7 @@ export const INIT_CODE_HASH = '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbe
 
 export const ROUTER_ADDRESS = '0xFA389663731e7ff2e10c926e782fEffeCB8ee934'
 const provider = getDefaultProvider(getNetwork(ChainId.RINKEBY));
-const getSwapFee  = async() => {
+export const getSwapFee  = async() => {
   // 0: "3"
   // 1: "3"
   // 2: "3"
@@ -42,6 +42,11 @@ const getSwapFee  = async() => {
   const {_swapFee} = await new Contract(ROUTER_ADDRESS, Router.abi, provider).getFeeVal()
   console.log('_swapFee: ' + _swapFee)
   return _swapFee
+}
+
+let SWAPFEE:any = ''
+async() => {
+  SWAPFEE = await getSwapFee()
 }
 
 export const MINIMUM_LIQUIDITY = JSBI.BigInt(1000)
@@ -54,7 +59,6 @@ export const THREE = JSBI.BigInt(3)
 export const FIVE = JSBI.BigInt(5)
 export const TEN = JSBI.BigInt(10)
 export const _100 = JSBI.BigInt(100)
-export const SWAPFEE = await getSwapFee()
 export const _997 = JSBI.BigInt(997 - SWAPFEE)
 export const _1000 = JSBI.BigInt(1000)
 

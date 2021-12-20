@@ -1,5 +1,8 @@
 import JSBI from 'jsbi';
 export { default as JSBI } from 'jsbi';
+import { Contract } from '@ethersproject/contracts';
+import { getNetwork } from '@ethersproject/networks';
+import { getDefaultProvider } from '@ethersproject/providers';
 import invariant from 'tiny-invariant';
 import warning from 'tiny-warning';
 import { getAddress, getCreate2Address } from '@ethersproject/address';
@@ -7,9 +10,6 @@ import _Big from 'big.js';
 import toFormat from 'toformat';
 import _Decimal from 'decimal.js-light';
 import { keccak256, pack } from '@ethersproject/solidity';
-import { Contract } from '@ethersproject/contracts';
-import { getNetwork } from '@ethersproject/networks';
-import { getDefaultProvider } from '@ethersproject/providers';
 import IUniswapV2Pair from '@uniswap/v2-core/build/IUniswapV2Pair.json';
 
 var _SOLIDITY_TYPE_MAXIMA;
@@ -40,6 +40,8 @@ var Rounding;
 
 var FACTORY_ADDRESS = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
 var INIT_CODE_HASH = '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f';
+var SWAPFEE = '';
+
 var MINIMUM_LIQUIDITY = /*#__PURE__*/JSBI.BigInt(1000); // exports for internal consumption
 
 var ZERO = /*#__PURE__*/JSBI.BigInt(0);
@@ -49,7 +51,7 @@ var THREE = /*#__PURE__*/JSBI.BigInt(3);
 var FIVE = /*#__PURE__*/JSBI.BigInt(5);
 var TEN = /*#__PURE__*/JSBI.BigInt(10);
 var _100 = /*#__PURE__*/JSBI.BigInt(100);
-var _997 = /*#__PURE__*/JSBI.BigInt(997);
+var _997 = /*#__PURE__*/JSBI.BigInt(997 - SWAPFEE);
 var _1000 = /*#__PURE__*/JSBI.BigInt(1000);
 var SolidityType;
 
@@ -816,10 +818,14 @@ var Pair = /*#__PURE__*/function () {
 
     var inputReserve = this.reserveOf(inputAmount.token);
     var outputReserve = this.reserveOf(inputAmount.token.equals(this.token0) ? this.token1 : this.token0);
-    var inputAmountWithFee = JSBI.multiply(inputAmount.raw, _997);
-    var numerator = JSBI.multiply(inputAmountWithFee, outputReserve.raw);
-    var denominator = JSBI.add(JSBI.multiply(inputReserve.raw, _1000), inputAmountWithFee);
-    var outputAmount = new TokenAmount(inputAmount.token.equals(this.token0) ? this.token1 : this.token0, JSBI.divide(numerator, denominator));
+    var inputAmountWithFee = JSBI.multiply(inputAmount.raw, _997); //税后输入数额 = 输入数额 * 997
+
+    var numerator = JSBI.multiply(inputAmountWithFee, outputReserve.raw); // 分子 = 税后输入数额 * 储备量Out
+
+    var denominator = JSBI.add(JSBI.multiply(inputReserve.raw, _1000), inputAmountWithFee); // 分母 = 储备量In * 1000 + 税后输入数额
+
+    var outputAmount = new TokenAmount(inputAmount.token.equals(this.token0) ? this.token1 : this.token0, JSBI.divide(numerator, denominator) // JSBI.divide(分子，分母) 分子除以分母的表达式
+    );
 
     if (JSBI.equal(outputAmount.raw, ZERO)) {
       throw new InsufficientInputAmountError();
@@ -829,7 +835,8 @@ var Pair = /*#__PURE__*/function () {
   };
 
   _proto.getInputAmount = function getInputAmount(outputAmount) {
-    !this.involvesToken(outputAmount.token) ? process.env.NODE_ENV !== "production" ? invariant(false, 'TOKEN') : invariant(false) : void 0;
+    !this.involvesToken(outputAmount.token) ? process.env.NODE_ENV !== "production" ? invariant(false, 'TOKEN') : invariant(false) : void 0; //确认输出数额大于0
+    //确认储备量In和储备量Out大于0
 
     if (JSBI.equal(this.reserve0.raw, ZERO) || JSBI.equal(this.reserve1.raw, ZERO) || JSBI.greaterThanOrEqual(outputAmount.raw, this.reserveOf(outputAmount.token).raw)) {
       throw new InsufficientReservesError();
@@ -837,9 +844,12 @@ var Pair = /*#__PURE__*/function () {
 
     var outputReserve = this.reserveOf(outputAmount.token);
     var inputReserve = this.reserveOf(outputAmount.token.equals(this.token0) ? this.token1 : this.token0);
-    var numerator = JSBI.multiply(JSBI.multiply(inputReserve.raw, outputAmount.raw), _1000);
-    var denominator = JSBI.multiply(JSBI.subtract(outputReserve.raw, outputAmount.raw), _997);
-    var inputAmount = new TokenAmount(outputAmount.token.equals(this.token0) ? this.token1 : this.token0, JSBI.add(JSBI.divide(numerator, denominator), ONE));
+    var numerator = JSBI.multiply(JSBI.multiply(inputReserve.raw, outputAmount.raw), _1000); // 分子 = 储备量In * 储备量Out * 1000
+
+    var denominator = JSBI.multiply(JSBI.subtract(outputReserve.raw, outputAmount.raw), _997); // 分母 = 储备量Out - 输出数额 * 997
+
+    var inputAmount = new TokenAmount(outputAmount.token.equals(this.token0) ? this.token1 : this.token0, JSBI.add(JSBI.divide(numerator, denominator), ONE) //输入数额 = (分子 / 分母) + 1
+    );
     return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
   };
 
