@@ -127,12 +127,12 @@ export class Pair {
     }
     const inputReserve = this.reserveOf(inputAmount.token)
     const outputReserve = this.reserveOf(inputAmount.token.equals(this.token0) ? this.token1 : this.token0)
-    const inputAmountWithFee = JSBI.multiply(inputAmount.raw, _997)
-    const numerator = JSBI.multiply(inputAmountWithFee, outputReserve.raw)
-    const denominator = JSBI.add(JSBI.multiply(inputReserve.raw, _1000), inputAmountWithFee)
+    const inputAmountWithFee = JSBI.multiply(inputAmount.raw, _997) //税后输入数额 = 输入数额 * 997
+    const numerator = JSBI.multiply(inputAmountWithFee, outputReserve.raw)  // 分子 = 税后输入数额 * 储备量Out
+    const denominator = JSBI.add(JSBI.multiply(inputReserve.raw, _1000), inputAmountWithFee)  // 分母 = 储备量In * 1000 + 税后输入数额
     const outputAmount = new TokenAmount(
       inputAmount.token.equals(this.token0) ? this.token1 : this.token0,
-      JSBI.divide(numerator, denominator)
+      JSBI.divide(numerator, denominator)    // JSBI.divide(分子，分母) 分子除以分母的表达式
     )
     if (JSBI.equal(outputAmount.raw, ZERO)) {
       throw new InsufficientInputAmountError()
@@ -142,6 +142,8 @@ export class Pair {
 
   public getInputAmount(outputAmount: TokenAmount): [TokenAmount, Pair] {
     invariant(this.involvesToken(outputAmount.token), 'TOKEN')
+    //确认输出数额大于0
+    //确认储备量In和储备量Out大于0
     if (
       JSBI.equal(this.reserve0.raw, ZERO) ||
       JSBI.equal(this.reserve1.raw, ZERO) ||
@@ -152,11 +154,11 @@ export class Pair {
 
     const outputReserve = this.reserveOf(outputAmount.token)
     const inputReserve = this.reserveOf(outputAmount.token.equals(this.token0) ? this.token1 : this.token0)
-    const numerator = JSBI.multiply(JSBI.multiply(inputReserve.raw, outputAmount.raw), _1000)
-    const denominator = JSBI.multiply(JSBI.subtract(outputReserve.raw, outputAmount.raw), _997)
+    const numerator = JSBI.multiply(JSBI.multiply(inputReserve.raw, outputAmount.raw), _1000)  // 分子 = 储备量In * 储备量Out * 1000
+    const denominator = JSBI.multiply(JSBI.subtract(outputReserve.raw, outputAmount.raw), _997)  // 分母 = 储备量Out - 输出数额 * 997
     const inputAmount = new TokenAmount(
       outputAmount.token.equals(this.token0) ? this.token1 : this.token0,
-      JSBI.add(JSBI.divide(numerator, denominator), ONE)
+      JSBI.add(JSBI.divide(numerator, denominator), ONE)    //输入数额 = (分子 / 分母) + 1
     )
     return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))]
   }
