@@ -53,7 +53,7 @@ var THREE = /*#__PURE__*/JSBI.BigInt(3);
 var FIVE = /*#__PURE__*/JSBI.BigInt(5);
 var TEN = /*#__PURE__*/JSBI.BigInt(10);
 var _100 = /*#__PURE__*/JSBI.BigInt(100);
-var _997 = /*#__PURE__*/JSBI.BigInt(997);
+var _997 = /*#__PURE__*/JSBI.BigInt(100);
 var _1000 = /*#__PURE__*/JSBI.BigInt(1000);
 var SolidityType;
 
