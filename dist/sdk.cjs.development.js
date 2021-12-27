@@ -1181,7 +1181,6 @@ var Trade = /*#__PURE__*/function () {
 
   _proto.minimumAmountOut = function minimumAmountOut(slippageTolerance) {
     !!slippageTolerance.lessThan(ZERO) ?  invariant(false, 'SLIPPAGE_TOLERANCE')  : void 0;
-    debugger;
 
     if (this.tradeType === exports.TradeType.EXACT_OUTPUT) {
       return this.outputAmount;
@@ -1215,15 +1214,14 @@ var Trade = /*#__PURE__*/function () {
    */
   ;
 
-  _proto.addAmountIn = function addAmountIn(slippageTolerance) {
-    !!slippageTolerance.lessThan(ZERO) ?  invariant(false, 'SLIPPAGE_TOLERANCE')  : void 0;
+  _proto.addAmount = function addAmount(slippageTolerance) {
+    !!slippageTolerance.lessThan(ZERO) ?  invariant(false, 'SLIPPAGE_TOLERANCE')  : void 0; // if (this.tradeType === TradeType.EXACT_INPUT) {
+    //   return this.inputAmount
+    // } else {
 
-    if (this.tradeType === exports.TradeType.EXACT_INPUT) {
-      return this.inputAmount;
-    } else {
-      var slippageAdjustedAmountIn = new Fraction(ONE).add(slippageTolerance).multiply(this.inputAmount.raw).quotient;
-      return this.inputAmount instanceof TokenAmount ? new TokenAmount(this.inputAmount.token, slippageAdjustedAmountIn) : CurrencyAmount.ether(slippageAdjustedAmountIn);
-    }
+    debugger;
+    var slippageAdjustedAmountIn = new Fraction(ONE).add(slippageTolerance).multiply(this.inputAmount.raw).quotient;
+    return this.inputAmount instanceof TokenAmount ? new TokenAmount(this.inputAmount.token, slippageAdjustedAmountIn) : CurrencyAmount.ether(slippageAdjustedAmountIn); // }
   }
   /**
    * Given a list of pairs, and a fixed amount in, returns the top `maxNumResults` trades that go from an input token

@@ -78,7 +78,7 @@ export declare class Trade {
      * 在给定的滑移公差下，通过此交易获得可花费的最大金额
      * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
      */
-    addAmountIn(slippageTolerance: Percent): CurrencyAmount;
+    addAmount(slippageTolerance: Percent): CurrencyAmount;
     /**
      * Given a list of pairs, and a fixed amount in, returns the top `maxNumResults` trades that go from an input token
      * amount to an output token, making at most `maxHops` hops.
