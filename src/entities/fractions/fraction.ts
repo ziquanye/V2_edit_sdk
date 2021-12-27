@@ -42,6 +42,7 @@ export class Fraction {
     return new Fraction(JSBI.remainder(this.numerator, this.denominator), this.denominator)
   }
 
+  // 倒转分子分母顺序
   public invert(): Fraction {
     return new Fraction(this.denominator, this.numerator)
   }

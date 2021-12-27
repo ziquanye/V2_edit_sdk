@@ -454,6 +454,7 @@ var Fraction = /*#__PURE__*/function () {
 
   var _proto = Fraction.prototype;
 
+  // 倒转分子分母顺序
   _proto.invert = function invert() {
     return new Fraction(this.denominator, this.numerator);
   };
@@ -1171,6 +1172,7 @@ var Trade = /*#__PURE__*/function () {
   }
   /**
    * Get the minimum amount that must be received from this trade for the given slippage tolerance
+   * 对于给定的滑移公差，获取此交易必须收到的最低金额
    * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
    */
   ;
@@ -1179,6 +1181,7 @@ var Trade = /*#__PURE__*/function () {
 
   _proto.minimumAmountOut = function minimumAmountOut(slippageTolerance) {
     !!slippageTolerance.lessThan(ZERO) ?  invariant(false, 'SLIPPAGE_TOLERANCE')  : void 0;
+    debugger;
 
     if (this.tradeType === exports.TradeType.EXACT_OUTPUT) {
       return this.outputAmount;
@@ -1189,11 +1192,30 @@ var Trade = /*#__PURE__*/function () {
   }
   /**
    * Get the maximum amount in that can be spent via this trade for the given slippage tolerance
+   * 在给定的滑移公差下，通过此交易获得可花费的最大金额
    * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
    */
   ;
 
   _proto.maximumAmountIn = function maximumAmountIn(slippageTolerance) {
+    !!slippageTolerance.lessThan(ZERO) ?  invariant(false, 'SLIPPAGE_TOLERANCE')  : void 0;
+    debugger;
+
+    if (this.tradeType === exports.TradeType.EXACT_INPUT) {
+      return this.inputAmount;
+    } else {
+      var slippageAdjustedAmountIn = new Fraction(ONE).add(slippageTolerance).multiply(this.inputAmount.raw).quotient;
+      return this.inputAmount instanceof TokenAmount ? new TokenAmount(this.inputAmount.token, slippageAdjustedAmountIn) : CurrencyAmount.ether(slippageAdjustedAmountIn);
+    }
+  }
+  /**
+   * Get the maximum amount in that can be spent via this trade for the given slippage tolerance
+   * 在给定的滑移公差下，通过此交易获得可花费的最大金额
+   * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
+   */
+  ;
+
+  _proto.addAmountIn = function addAmountIn(slippageTolerance) {
     !!slippageTolerance.lessThan(ZERO) ?  invariant(false, 'SLIPPAGE_TOLERANCE')  : void 0;
 
     if (this.tradeType === exports.TradeType.EXACT_INPUT) {
@@ -1246,7 +1268,9 @@ var Trade = /*#__PURE__*/function () {
     !(chainId !== undefined) ?  invariant(false, 'CHAIN_ID')  : void 0;
     var amountIn = wrappedAmount(currencyAmountIn, chainId);
     console.log('amountIn-xxxxxxxxx');
-    console.log(amountIn);
+    console.log(amountIn); // amountIn = amountIn.toExact() - (amountIn.toExact() * 0.003)
+
+    console.log(amountIn.toExact());
     var tokenOut = wrappedCurrency(currencyOut, chainId);
 
     for (var i = 0; i < pairs.length; i++) {

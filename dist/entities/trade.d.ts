@@ -63,14 +63,22 @@ export declare class Trade {
     constructor(route: Route, amount: CurrencyAmount, tradeType: TradeType);
     /**
      * Get the minimum amount that must be received from this trade for the given slippage tolerance
+     * 对于给定的滑移公差，获取此交易必须收到的最低金额
      * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
      */
     minimumAmountOut(slippageTolerance: Percent): CurrencyAmount;
     /**
      * Get the maximum amount in that can be spent via this trade for the given slippage tolerance
+     * 在给定的滑移公差下，通过此交易获得可花费的最大金额
      * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
      */
     maximumAmountIn(slippageTolerance: Percent): CurrencyAmount;
+    /**
+     * Get the maximum amount in that can be spent via this trade for the given slippage tolerance
+     * 在给定的滑移公差下，通过此交易获得可花费的最大金额
+     * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
+     */
+    addAmountIn(slippageTolerance: Percent): CurrencyAmount;
     /**
      * Given a list of pairs, and a fixed amount in, returns the top `maxNumResults` trades that go from an input token
      * amount to an output token, making at most `maxHops` hops.
