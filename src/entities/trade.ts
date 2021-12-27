@@ -269,6 +269,8 @@ export class Trade {
     invariant(chainId !== undefined, 'CHAIN_ID')
 
     const amountIn = wrappedAmount(currencyAmountIn, chainId)
+    console.log('amountIn-xxxxxxxxx')
+    console.log(amountIn)
     const tokenOut = wrappedCurrency(currencyOut, chainId)
     for (let i = 0; i < pairs.length; i++) {
       const pair = pairs[i]
@@ -281,7 +283,8 @@ export class Trade {
         ;[amountOut] = pair.getOutputAmount(amountIn)
       } catch (error) {
         // input too low
-        if (error.isInsufficientInputAmountError) {
+        let err:any = error
+        if (err.isInsufficientInputAmountError) {
           continue
         }
         throw error
@@ -368,8 +371,9 @@ export class Trade {
       try {
         ;[amountIn] = pair.getInputAmount(amountOut)
       } catch (error) {
+        let err:any = error
         // not enough liquidity in this pair
-        if (error.isInsufficientReservesError) {
+        if (err.isInsufficientReservesError) {
           continue
         }
         throw error

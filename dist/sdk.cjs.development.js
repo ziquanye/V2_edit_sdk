@@ -40,7 +40,6 @@ var _SOLIDITY_TYPE_MAXIMA;
 
 var FACTORY_ADDRESS = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
 var INIT_CODE_HASH = '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f';
-var SWAPFEE = '';
 
 var MINIMUM_LIQUIDITY = /*#__PURE__*/JSBI.BigInt(1000); // exports for internal consumption
 
@@ -51,7 +50,7 @@ var THREE = /*#__PURE__*/JSBI.BigInt(3);
 var FIVE = /*#__PURE__*/JSBI.BigInt(5);
 var TEN = /*#__PURE__*/JSBI.BigInt(10);
 var _100 = /*#__PURE__*/JSBI.BigInt(100);
-var _997 = /*#__PURE__*/JSBI.BigInt(997 - SWAPFEE);
+var _997 = /*#__PURE__*/JSBI.BigInt(997);
 var _1000 = /*#__PURE__*/JSBI.BigInt(1000);
 var SolidityType;
 
@@ -1246,6 +1245,8 @@ var Trade = /*#__PURE__*/function () {
     var chainId = currencyAmountIn instanceof TokenAmount ? currencyAmountIn.token.chainId : currencyOut instanceof Token ? currencyOut.chainId : undefined;
     !(chainId !== undefined) ?  invariant(false, 'CHAIN_ID')  : void 0;
     var amountIn = wrappedAmount(currencyAmountIn, chainId);
+    console.log('amountIn-xxxxxxxxx');
+    console.log(amountIn);
     var tokenOut = wrappedCurrency(currencyOut, chainId);
 
     for (var i = 0; i < pairs.length; i++) {
@@ -1263,7 +1264,9 @@ var Trade = /*#__PURE__*/function () {
         amountOut = _pair$getOutputAmount2[0];
       } catch (error) {
         // input too low
-        if (error.isInsufficientInputAmountError) {
+        var err = error;
+
+        if (err.isInsufficientInputAmountError) {
           continue;
         }
 
@@ -1344,8 +1347,9 @@ var Trade = /*#__PURE__*/function () {
 
         amountIn = _pair$getInputAmount2[0];
       } catch (error) {
-        // not enough liquidity in this pair
-        if (error.isInsufficientReservesError) {
+        var err = error; // not enough liquidity in this pair
+
+        if (err.isInsufficientReservesError) {
           continue;
         }
 
@@ -1397,14 +1401,14 @@ var Router = /*#__PURE__*/function () {
     var etherOut = trade.outputAmount.currency === ETHER; // the router does not support both ether in and out
 
     !!(etherIn && etherOut) ?  invariant(false, 'ETHER_IN_OUT')  : void 0;
-    !(options.ttl > 0) ?  invariant(false, 'TTL')  : void 0;
+    !(!('ttl' in options) || options.ttl > 0) ?  invariant(false, 'TTL')  : void 0;
     var to = validateAndParseAddress(options.recipient);
     var amountIn = toHex(trade.maximumAmountIn(options.allowedSlippage));
     var amountOut = toHex(trade.minimumAmountOut(options.allowedSlippage));
     var path = trade.route.path.map(function (token) {
       return token.address;
     });
-    var deadline = "0x" + (Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16);
+    var deadline = 'ttl' in options ? "0x" + (Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16) : "0x" + options.deadline.toString(16);
     var useFeeOnTransfer = Boolean(options.feeOnTransfer);
     var methodName;
     var args;

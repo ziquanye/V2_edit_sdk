@@ -30,7 +30,7 @@ export const FACTORY_ADDRESS = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
 
 export const INIT_CODE_HASH = '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f'
 
-export const ROUTER_ADDRESS = '0xFA389663731e7ff2e10c926e782fEffeCB8ee934'
+export const ROUTER_ADDRESS = '0x85af5505cA753045CfCF4ab98C0bC8d4F828B1B3' //  0xFA389663731e7ff2e10c926e782fEffeCB8ee934
 const provider = getDefaultProvider(getNetwork(ChainId.RINKEBY));
 export const getSwapFee  = async() => {
   // 0: "3"
@@ -44,9 +44,9 @@ export const getSwapFee  = async() => {
   return _swapFee
 }
 
-let SWAPFEE:any = ''
+let fee:any = ''
 async() => {
-  SWAPFEE = await getSwapFee()
+  fee = await getSwapFee()
 }
 
 export const MINIMUM_LIQUIDITY = JSBI.BigInt(1000)
@@ -59,8 +59,10 @@ export const THREE = JSBI.BigInt(3)
 export const FIVE = JSBI.BigInt(5)
 export const TEN = JSBI.BigInt(10)
 export const _100 = JSBI.BigInt(100)
-export const _997 = JSBI.BigInt(997 - SWAPFEE)
+export const _997 = JSBI.BigInt(997)
 export const _1000 = JSBI.BigInt(1000)
+export const _10000 = JSBI.BigInt(10000)
+export const SWAPFEE = JSBI.BigInt(fee)
 
 export enum SolidityType {
   uint8 = 'uint8',
