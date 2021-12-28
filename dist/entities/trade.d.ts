@@ -31,7 +31,7 @@ export declare class Trade {
     /**
      * The input amount for the trade assuming no slippage.
      */
-    readonly inputAmount: CurrencyAmount;
+    inputAmount: CurrencyAmount;
     /**
      * The output amount for the trade assuming no slippage.
      */
