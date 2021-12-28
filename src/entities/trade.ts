@@ -225,7 +225,6 @@ export class Trade {
    */
   public maximumAmountIn(slippageTolerance: Percent): CurrencyAmount {
     invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
-    debugger
     if (this.tradeType === TradeType.EXACT_INPUT) {
       return this.inputAmount
     } else {
@@ -239,8 +238,7 @@ export class Trade {
   }
 
   /**
-   * Get the maximum amount in that can be spent via this trade for the given slippage tolerance
-   * 在给定的滑移公差下，通过此交易获得可花费的最大金额
+   * 添加额外费用
    * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
    */
    public addAmount(slippageTolerance: Percent): CurrencyAmount {
@@ -248,7 +246,6 @@ export class Trade {
     // if (this.tradeType === TradeType.EXACT_INPUT) {
     //   return this.inputAmount
     // } else {
-      debugger
       const slippageAdjustedAmountIn = new Fraction(ONE)
         .add(slippageTolerance)
         .multiply(this.inputAmount.raw).quotient

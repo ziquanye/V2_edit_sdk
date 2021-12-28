@@ -74,8 +74,7 @@ export declare class Trade {
      */
     maximumAmountIn(slippageTolerance: Percent): CurrencyAmount;
     /**
-     * Get the maximum amount in that can be spent via this trade for the given slippage tolerance
-     * 在给定的滑移公差下，通过此交易获得可花费的最大金额
+     * 添加额外费用
      * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
      */
     addAmount(slippageTolerance: Percent): CurrencyAmount;

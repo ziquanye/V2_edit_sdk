@@ -1198,7 +1198,6 @@ var Trade = /*#__PURE__*/function () {
 
   _proto.maximumAmountIn = function maximumAmountIn(slippageTolerance) {
     !!slippageTolerance.lessThan(ZERO) ? process.env.NODE_ENV !== "production" ? invariant(false, 'SLIPPAGE_TOLERANCE') : invariant(false) : void 0;
-    debugger;
 
     if (this.tradeType === TradeType.EXACT_INPUT) {
       return this.inputAmount;
@@ -1208,8 +1207,7 @@ var Trade = /*#__PURE__*/function () {
     }
   }
   /**
-   * Get the maximum amount in that can be spent via this trade for the given slippage tolerance
-   * 在给定的滑移公差下，通过此交易获得可花费的最大金额
+   * 添加额外费用
    * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
    */
   ;
@@ -1219,7 +1217,6 @@ var Trade = /*#__PURE__*/function () {
     //   return this.inputAmount
     // } else {
 
-    debugger;
     var slippageAdjustedAmountIn = new Fraction(ONE).add(slippageTolerance).multiply(this.inputAmount.raw).quotient;
     return this.inputAmount instanceof TokenAmount ? new TokenAmount(this.inputAmount.token, slippageAdjustedAmountIn) : CurrencyAmount.ether(slippageAdjustedAmountIn); // }
   }
