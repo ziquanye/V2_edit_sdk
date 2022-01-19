@@ -24,14 +24,24 @@ export class Route {
         (input === ETHER && pairs[0].involvesToken(WETH[pairs[0].chainId])),
       'INPUT'
     )
+    // invariant(
+    //   (input instanceof Token && pairs[0].involvesToken(input)),
+    //   'INPUT'
+    // )
     invariant(
       typeof output === 'undefined' ||
         (output instanceof Token && pairs[pairs.length - 1].involvesToken(output)) ||
         (output === ETHER && pairs[pairs.length - 1].involvesToken(WETH[pairs[0].chainId])),
       'OUTPUT'
     )
+    // invariant(
+    //   typeof output === 'undefined' ||
+    //     (output instanceof Token && pairs[pairs.length - 1].involvesToken(output)),
+    //   'OUTPUT'
+    // )
 
     const path: Token[] = [input instanceof Token ? input : WETH[pairs[0].chainId]]
+    // const path: Token[] = [input]
     for (const [i, pair] of pairs.entries()) {
       const currentInput = path[i]
       invariant(currentInput.equals(pair.token0) || currentInput.equals(pair.token1), 'PATH')

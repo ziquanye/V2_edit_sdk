@@ -88,6 +88,7 @@ export abstract class Router {
       'ttl' in options
         ? `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16)}`
         : `0x${options.deadline.toString(16)}`
+    const time:string[] = ['0','18446744073709551615','0','18446744073709551615']; // FSN
 
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
@@ -111,7 +112,7 @@ export abstract class Router {
             ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
             : 'swapExactTokensForTokens'
           // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
-          args = [amountIn, amountOut, path, to, deadline]
+          args = [amountIn, amountOut, path, to, deadline, time] // FSN网络新增一个time字段传递
           value = ZERO_HEX
         }
         break
@@ -130,7 +131,7 @@ export abstract class Router {
         } else {
           methodName = 'swapTokensForExactTokens'
           // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
-          args = [amountOut, amountIn, path, to, deadline]
+          args = [amountOut, amountIn, path, to, deadline, time]  // FSN网络新增一个time字段传递
           value = ZERO_HEX
         }
         break
