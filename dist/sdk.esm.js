@@ -16,11 +16,11 @@ var _SOLIDITY_TYPE_MAXIMA;
 var ChainId;
 
 (function (ChainId) {
-  ChainId[ChainId["MAINNET"] = 1] = "MAINNET";
-  ChainId[ChainId["ROPSTEN"] = 3] = "ROPSTEN";
-  ChainId[ChainId["RINKEBY"] = 4] = "RINKEBY";
-  ChainId[ChainId["G\xD6RLI"] = 5] = "G\xD6RLI";
-  ChainId[ChainId["KOVAN"] = 42] = "KOVAN";
+  // MAINNET = 1,
+  // ROPSTEN = 3,
+  // RINKEBY = 4,
+  // GÖRLI = 5,
+  // KOVAN = 42,
   ChainId[ChainId["FSN"] = 1667] = "FSN"; // 增加FSN网络ID
 })(ChainId || (ChainId = {}));
 
@@ -373,7 +373,6 @@ function Currency(decimals, symbol, name) {
 Currency.ETHER = /*#__PURE__*/new Currency(18, 'ETH', 'Ether');
 var ETHER = Currency.ETHER;
 
-var _WETH;
 /**
  * Represents an ERC20 token with a unique address and some metadata.
  */
@@ -436,7 +435,31 @@ function currencyEquals(currencyA, currencyB) {
     return currencyA === currencyB;
   }
 }
-var WETH = (_WETH = {}, _WETH[ChainId.MAINNET] = /*#__PURE__*/new Token(ChainId.MAINNET, '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', 18, 'WETH', 'Wrapped Ether'), _WETH[ChainId.ROPSTEN] = /*#__PURE__*/new Token(ChainId.ROPSTEN, '0xc778417E063141139Fce010982780140Aa0cD5Ab', 18, 'WETH', 'Wrapped Ether'), _WETH[ChainId.RINKEBY] = /*#__PURE__*/new Token(ChainId.RINKEBY, '0xc778417E063141139Fce010982780140Aa0cD5Ab', 18, 'WETH', 'Wrapped Ether'), _WETH[ChainId.GÖRLI] = /*#__PURE__*/new Token(ChainId.GÖRLI, '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', 18, 'WETH', 'Wrapped Ether'), _WETH[ChainId.KOVAN] = /*#__PURE__*/new Token(ChainId.KOVAN, '0xd0A1E359811322d97991E03f863a0C30C2cF029C', 18, 'WETH', 'Wrapped Ether'), _WETH[ChainId.FSN] = /*#__PURE__*/new Token(ChainId.FSN, '0x', 18, 'WETH', 'Wrapped Ether'), _WETH);
+var WETH = {// [ChainId.MAINNET]: new Token(
+  //   ChainId.MAINNET,
+  //   '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+  //   18,
+  //   'WETH',
+  //   'Wrapped Ether'
+  // ),
+  // [ChainId.ROPSTEN]: new Token(
+  //   ChainId.ROPSTEN,
+  //   '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+  //   18,
+  //   'WETH',
+  //   'Wrapped Ether'
+  // ),
+  // [ChainId.RINKEBY]: new Token(
+  //   ChainId.RINKEBY,
+  //   '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+  //   18,
+  //   'WETH',
+  //   'Wrapped Ether'
+  // ),
+  // [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', 18, 'WETH', 'Wrapped Ether'),
+  // [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0xd0A1E359811322d97991E03f863a0C30C2cF029C', 18, 'WETH', 'Wrapped Ether'),
+  // [ChainId.FSN]: new Token(ChainId.FSN, '0x8f5fc30a858e6249294de1f9f7781dce8cbc1174', 18, 'ETH', 'Ethereum') // 新增FSN网络WETH地址，为空
+};
 
 var _toSignificantRoundin, _toFixedRounding;
 var Decimal = /*#__PURE__*/toFormat(_Decimal);
@@ -963,19 +986,22 @@ var Route = /*#__PURE__*/function () {
     !(pairs.length > 0) ? process.env.NODE_ENV !== "production" ? invariant(false, 'PAIRS') : invariant(false) : void 0;
     !pairs.every(function (pair) {
       return pair.chainId === pairs[0].chainId;
-    }) ? process.env.NODE_ENV !== "production" ? invariant(false, 'CHAIN_IDS') : invariant(false) : void 0;
-    !(input instanceof Token && pairs[0].involvesToken(input) || input === ETHER && pairs[0].involvesToken(WETH[pairs[0].chainId])) ? process.env.NODE_ENV !== "production" ? invariant(false, 'INPUT') : invariant(false) : void 0; // invariant(
-    //   (input instanceof Token && pairs[0].involvesToken(input)),
+    }) ? process.env.NODE_ENV !== "production" ? invariant(false, 'CHAIN_IDS') : invariant(false) : void 0; // invariant(
+    //   (input instanceof Token && pairs[0].involvesToken(input)) ||
+    //     (input === ETHER && pairs[0].involvesToken(WETH[pairs[0].chainId])),
     //   'INPUT'
     // )
 
-    !(typeof output === 'undefined' || output instanceof Token && pairs[pairs.length - 1].involvesToken(output) || output === ETHER && pairs[pairs.length - 1].involvesToken(WETH[pairs[0].chainId])) ? process.env.NODE_ENV !== "production" ? invariant(false, 'OUTPUT') : invariant(false) : void 0; // invariant(
+    !(input instanceof Token && pairs[0].involvesToken(input)) ? process.env.NODE_ENV !== "production" ? invariant(false, 'INPUT') : invariant(false) : void 0; // invariant(
     //   typeof output === 'undefined' ||
-    //     (output instanceof Token && pairs[pairs.length - 1].involvesToken(output)),
+    //     (output instanceof Token && pairs[pairs.length - 1].involvesToken(output)) ||
+    //     (output === ETHER && pairs[pairs.length - 1].involvesToken(WETH[pairs[0].chainId])),
     //   'OUTPUT'
     // )
 
-    var path = [input instanceof Token ? input : WETH[pairs[0].chainId]]; // const path: Token[] = [input]
+    !(typeof output === 'undefined' || output instanceof Token && pairs[pairs.length - 1].involvesToken(output)) ? process.env.NODE_ENV !== "production" ? invariant(false, 'OUTPUT') : invariant(false) : void 0; // const path: Token[] = [input instanceof Token ? input : WETH[pairs[0].chainId]]
+
+    var path = [input];
 
     for (var _iterator = _createForOfIteratorHelperLoose(pairs.entries()), _step; !(_step = _iterator()).done;) {
       var _step$value = _step.value,
@@ -1100,26 +1126,26 @@ function tradeComparator(a, b) {
  * In other words, if the currency is ETHER, returns the WETH token amount for the given chain. Otherwise, returns
  * the input currency amount.
  */
-
-function wrappedAmount(currencyAmount, chainId) {
-  if (currencyAmount instanceof TokenAmount) return currencyAmount;
-  if (currencyAmount.currency === ETHER) return new TokenAmount(WETH[chainId], currencyAmount.raw);
-   process.env.NODE_ENV !== "production" ? invariant(false, 'CURRENCY') : invariant(false) ;
-} // function wrappedAmount(currencyAmount: CurrencyAmount): TokenAmount {
+// function wrappedAmount(currencyAmount: CurrencyAmount, chainId: ChainId): TokenAmount {
 //   if (currencyAmount instanceof TokenAmount) return currencyAmount
+//   if (currencyAmount.currency === ETHER) return new TokenAmount(WETH[chainId], currencyAmount.raw)
 //   invariant(false, 'CURRENCY')
 // }
 
-
-function wrappedCurrency(currency, chainId) {
-  if (currency instanceof Token) return currency;
-  if (currency === ETHER) return WETH[chainId];
+function wrappedAmount(currencyAmount) {
+  if (currencyAmount instanceof TokenAmount) return currencyAmount;
    process.env.NODE_ENV !== "production" ? invariant(false, 'CURRENCY') : invariant(false) ;
-} // function wrappedCurrency(currency: Currency): Token {
+} // function wrappedCurrency(currency: Currency, chainId: ChainId): Token {
 //   if (currency instanceof Token) return currency
+//   if (currency === ETHER) return WETH[chainId]
 //   invariant(false, 'CURRENCY')
 // }
 
+
+function wrappedCurrency(currency) {
+  if (currency instanceof Token) return currency;
+   process.env.NODE_ENV !== "production" ? invariant(false, 'CURRENCY') : invariant(false) ;
+}
 /**
  * Represents a trade executed against a list of pairs.
  * Does not account for slippage, i.e. trades that front run this trade and move the price.
@@ -1132,8 +1158,9 @@ var Trade = /*#__PURE__*/function () {
     var nextPairs = new Array(route.pairs.length);
 
     if (tradeType === TradeType.EXACT_INPUT) {
-      !currencyEquals(amount.currency, route.input) ? process.env.NODE_ENV !== "production" ? invariant(false, 'INPUT') : invariant(false) : void 0;
-      amounts[0] = wrappedAmount(amount, route.chainId); // amounts[0] = wrappedAmount(amount)
+      !currencyEquals(amount.currency, route.input) ? process.env.NODE_ENV !== "production" ? invariant(false, 'INPUT') : invariant(false) : void 0; // amounts[0] = wrappedAmount(amount, route.chainId)
+
+      amounts[0] = wrappedAmount(amount);
 
       for (var i = 0; i < route.path.length - 1; i++) {
         var pair = route.pairs[i];
@@ -1146,8 +1173,9 @@ var Trade = /*#__PURE__*/function () {
         nextPairs[i] = nextPair;
       }
     } else {
-      !currencyEquals(amount.currency, route.output) ? process.env.NODE_ENV !== "production" ? invariant(false, 'OUTPUT') : invariant(false) : void 0;
-      amounts[amounts.length - 1] = wrappedAmount(amount, route.chainId); // amounts[amounts.length - 1] = wrappedAmount(amount)
+      !currencyEquals(amount.currency, route.output) ? process.env.NODE_ENV !== "production" ? invariant(false, 'OUTPUT') : invariant(false) : void 0; // amounts[amounts.length - 1] = wrappedAmount(amount, route.chainId)
+
+      amounts[amounts.length - 1] = wrappedAmount(amount);
 
       for (var _i = route.path.length - 1; _i > 0; _i--) {
         var _pair = route.pairs[_i - 1];
@@ -1276,14 +1304,15 @@ var Trade = /*#__PURE__*/function () {
     !(maxHops > 0) ? process.env.NODE_ENV !== "production" ? invariant(false, 'MAX_HOPS') : invariant(false) : void 0;
     !(originalAmountIn === currencyAmountIn || currentPairs.length > 0) ? process.env.NODE_ENV !== "production" ? invariant(false, 'INVALID_RECURSION') : invariant(false) : void 0;
     var chainId = currencyAmountIn instanceof TokenAmount ? currencyAmountIn.token.chainId : currencyOut instanceof Token ? currencyOut.chainId : undefined;
-    !(chainId !== undefined) ? process.env.NODE_ENV !== "production" ? invariant(false, 'CHAIN_ID') : invariant(false) : void 0;
-    var amountIn = wrappedAmount(currencyAmountIn, chainId); // let amountIn = wrappedAmount(currencyAmountIn)
+    !(chainId !== undefined) ? process.env.NODE_ENV !== "production" ? invariant(false, 'CHAIN_ID') : invariant(false) : void 0; // let amountIn = wrappedAmount(currencyAmountIn, chainId)
 
+    var amountIn = wrappedAmount(currencyAmountIn);
     console.log('amountIn-xxxxxxxxx');
     console.log(amountIn); // amountIn = amountIn.toExact() - (amountIn.toExact() * 0.003)
 
-    console.log(amountIn.toExact());
-    var tokenOut = wrappedCurrency(currencyOut, chainId); // const tokenOut = wrappedCurrency(currencyOut)
+    console.log(amountIn.toExact()); // const tokenOut = wrappedCurrency(currencyOut, chainId)
+
+    var tokenOut = wrappedCurrency(currencyOut);
 
     for (var i = 0; i < pairs.length; i++) {
       var pair = pairs[i]; // pair irrelevant
@@ -1365,10 +1394,11 @@ var Trade = /*#__PURE__*/function () {
     !(maxHops > 0) ? process.env.NODE_ENV !== "production" ? invariant(false, 'MAX_HOPS') : invariant(false) : void 0;
     !(originalAmountOut === currencyAmountOut || currentPairs.length > 0) ? process.env.NODE_ENV !== "production" ? invariant(false, 'INVALID_RECURSION') : invariant(false) : void 0;
     var chainId = currencyAmountOut instanceof TokenAmount ? currencyAmountOut.token.chainId : currencyIn instanceof Token ? currencyIn.chainId : undefined;
-    !(chainId !== undefined) ? process.env.NODE_ENV !== "production" ? invariant(false, 'CHAIN_ID') : invariant(false) : void 0;
-    var amountOut = wrappedAmount(currencyAmountOut, chainId);
-    var tokenIn = wrappedCurrency(currencyIn, chainId); // const amountOut = wrappedAmount(currencyAmountOut)
-    // const tokenIn = wrappedCurrency(currencyIn)
+    !(chainId !== undefined) ? process.env.NODE_ENV !== "production" ? invariant(false, 'CHAIN_ID') : invariant(false) : void 0; // const amountOut = wrappedAmount(currencyAmountOut, chainId)
+    // const tokenIn = wrappedCurrency(currencyIn, chainId)
+
+    var amountOut = wrappedAmount(currencyAmountOut);
+    var tokenIn = wrappedCurrency(currencyIn);
 
     for (var i = 0; i < pairs.length; i++) {
       var pair = pairs[i]; // pair irrelevant
@@ -1546,11 +1576,10 @@ var ERC20 = [
 	}
 ];
 
-var _TOKEN_DECIMALS_CACHE;
-var TOKEN_DECIMALS_CACHE = (_TOKEN_DECIMALS_CACHE = {}, _TOKEN_DECIMALS_CACHE[ChainId.MAINNET] = {
-  '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': 9 // DGD
-
-}, _TOKEN_DECIMALS_CACHE);
+var TOKEN_DECIMALS_CACHE = {// [ChainId.MAINNET]: {
+  //   '0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A': 9 // DGD
+  // }
+};
 /**
  * Contains methods for constructing instances of pairs and tokens from on-chain data.
  */
@@ -1572,7 +1601,7 @@ var Fetcher = /*#__PURE__*/function () {
 
   Fetcher.fetchTokenData = function fetchTokenData(chainId, address, provider, symbol, name) {
     try {
-      var _TOKEN_DECIMALS_CACHE2, _TOKEN_DECIMALS_CACHE3;
+      var _TOKEN_DECIMALS_CACHE, _TOKEN_DECIMALS_CACHE2;
 
       var _temp3 = function _temp3(parsedDecimals) {
         return new Token(chainId, address, parsedDecimals, symbol, name);
@@ -1580,12 +1609,12 @@ var Fetcher = /*#__PURE__*/function () {
 
       if (provider === undefined) provider = getDefaultProvider(getNetwork(chainId));
 
-      var _temp4 = typeof ((_TOKEN_DECIMALS_CACHE2 = TOKEN_DECIMALS_CACHE) === null || _TOKEN_DECIMALS_CACHE2 === void 0 ? void 0 : (_TOKEN_DECIMALS_CACHE3 = _TOKEN_DECIMALS_CACHE2[chainId]) === null || _TOKEN_DECIMALS_CACHE3 === void 0 ? void 0 : _TOKEN_DECIMALS_CACHE3[address]) === 'number';
+      var _temp4 = typeof ((_TOKEN_DECIMALS_CACHE = TOKEN_DECIMALS_CACHE) === null || _TOKEN_DECIMALS_CACHE === void 0 ? void 0 : (_TOKEN_DECIMALS_CACHE2 = _TOKEN_DECIMALS_CACHE[chainId]) === null || _TOKEN_DECIMALS_CACHE2 === void 0 ? void 0 : _TOKEN_DECIMALS_CACHE2[address]) === 'number';
 
       return Promise.resolve(_temp4 ? _temp3(TOKEN_DECIMALS_CACHE[chainId][address]) : Promise.resolve(new Contract(address, ERC20, provider).decimals().then(function (decimals) {
-        var _TOKEN_DECIMALS_CACHE4, _extends2, _extends3;
+        var _TOKEN_DECIMALS_CACHE3, _extends2, _extends3;
 
-        TOKEN_DECIMALS_CACHE = _extends(_extends({}, TOKEN_DECIMALS_CACHE), {}, (_extends3 = {}, _extends3[chainId] = _extends(_extends({}, (_TOKEN_DECIMALS_CACHE4 = TOKEN_DECIMALS_CACHE) === null || _TOKEN_DECIMALS_CACHE4 === void 0 ? void 0 : _TOKEN_DECIMALS_CACHE4[chainId]), {}, (_extends2 = {}, _extends2[address] = decimals, _extends2)), _extends3));
+        TOKEN_DECIMALS_CACHE = _extends(_extends({}, TOKEN_DECIMALS_CACHE), {}, (_extends3 = {}, _extends3[chainId] = _extends(_extends({}, (_TOKEN_DECIMALS_CACHE3 = TOKEN_DECIMALS_CACHE) === null || _TOKEN_DECIMALS_CACHE3 === void 0 ? void 0 : _TOKEN_DECIMALS_CACHE3[chainId]), {}, (_extends2 = {}, _extends2[address] = decimals, _extends2)), _extends3));
         return decimals;
       })).then(_temp3));
     } catch (e) {

@@ -1,8 +1,8 @@
 import { ChainId } from '../constants'
 import invariant from 'tiny-invariant'
 
-import { Currency, ETHER } from './currency'
-import { Token, WETH } from './token'
+import { Currency } from './currency'
+import { Token } from './token'
 import { Pair } from './pair'
 import { Price } from './fractions/price'
 
