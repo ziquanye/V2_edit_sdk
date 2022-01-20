@@ -87,25 +87,25 @@ export interface BestTradeOptions {
  * In other words, if the currency is ETHER, returns the WETH token amount for the given chain. Otherwise, returns
  * the input currency amount.
  */
-function wrappedAmount(currencyAmount: CurrencyAmount, chainId: ChainId): TokenAmount {
-  if (currencyAmount instanceof TokenAmount) return currencyAmount
-  if (currencyAmount.currency === ETHER) return new TokenAmount(WETH[chainId], currencyAmount.raw)
-  invariant(false, 'CURRENCY')
-}
-// function wrappedAmount(currencyAmount: CurrencyAmount): TokenAmount {
+// function wrappedAmount(currencyAmount: CurrencyAmount, chainId: ChainId): TokenAmount {
 //   if (currencyAmount instanceof TokenAmount) return currencyAmount
+//   if (currencyAmount.currency === ETHER) return new TokenAmount(WETH[chainId], currencyAmount.raw)
 //   invariant(false, 'CURRENCY')
 // }
-
-function wrappedCurrency(currency: Currency, chainId: ChainId): Token {
-  if (currency instanceof Token) return currency
-  if (currency === ETHER) return WETH[chainId]
+function wrappedAmount(currencyAmount: CurrencyAmount): TokenAmount {
+  if (currencyAmount instanceof TokenAmount) return currencyAmount
   invariant(false, 'CURRENCY')
 }
-// function wrappedCurrency(currency: Currency): Token {
+
+// function wrappedCurrency(currency: Currency, chainId: ChainId): Token {
 //   if (currency instanceof Token) return currency
+//   if (currency === ETHER) return WETH[chainId]
 //   invariant(false, 'CURRENCY')
 // }
+function wrappedCurrency(currency: Currency): Token {
+  if (currency instanceof Token) return currency
+  invariant(false, 'CURRENCY')
+}
 
 /**
  * Represents a trade executed against a list of pairs.
@@ -164,8 +164,8 @@ export class Trade {
     const nextPairs: Pair[] = new Array(route.pairs.length)
     if (tradeType === TradeType.EXACT_INPUT) {
       invariant(currencyEquals(amount.currency, route.input), 'INPUT')
-      amounts[0] = wrappedAmount(amount, route.chainId)
-      // amounts[0] = wrappedAmount(amount)
+      // amounts[0] = wrappedAmount(amount, route.chainId)
+      amounts[0] = wrappedAmount(amount)
       for (let i = 0; i < route.path.length - 1; i++) {
         const pair = route.pairs[i]
         const [outputAmount, nextPair] = pair.getOutputAmount(amounts[i])
@@ -174,8 +174,8 @@ export class Trade {
       }
     } else {
       invariant(currencyEquals(amount.currency, route.output), 'OUTPUT')
-      amounts[amounts.length - 1] = wrappedAmount(amount, route.chainId)
-      // amounts[amounts.length - 1] = wrappedAmount(amount)
+      // amounts[amounts.length - 1] = wrappedAmount(amount, route.chainId)
+      amounts[amounts.length - 1] = wrappedAmount(amount)
       for (let i = route.path.length - 1; i > 0; i--) {
         const pair = route.pairs[i - 1]
         const [inputAmount, nextPair] = pair.getInputAmount(amounts[i])
@@ -298,14 +298,14 @@ export class Trade {
         : undefined
     invariant(chainId !== undefined, 'CHAIN_ID')
 
-    let amountIn = wrappedAmount(currencyAmountIn, chainId)
-    // let amountIn = wrappedAmount(currencyAmountIn)
+    // let amountIn = wrappedAmount(currencyAmountIn, chainId)
+    let amountIn = wrappedAmount(currencyAmountIn)
     console.log('amountIn-xxxxxxxxx')
     console.log(amountIn)
     // amountIn = amountIn.toExact() - (amountIn.toExact() * 0.003)
     console.log(amountIn.toExact())
-    const tokenOut = wrappedCurrency(currencyOut, chainId)
-    // const tokenOut = wrappedCurrency(currencyOut)
+    // const tokenOut = wrappedCurrency(currencyOut, chainId)
+    const tokenOut = wrappedCurrency(currencyOut)
     for (let i = 0; i < pairs.length; i++) {
       const pair = pairs[i]
       // pair irrelevant
@@ -393,10 +393,10 @@ export class Trade {
         : undefined
     invariant(chainId !== undefined, 'CHAIN_ID')
 
-    const amountOut = wrappedAmount(currencyAmountOut, chainId)
-    const tokenIn = wrappedCurrency(currencyIn, chainId)
-    // const amountOut = wrappedAmount(currencyAmountOut)
-    // const tokenIn = wrappedCurrency(currencyIn)
+    // const amountOut = wrappedAmount(currencyAmountOut, chainId)
+    // const tokenIn = wrappedCurrency(currencyIn, chainId)
+    const amountOut = wrappedAmount(currencyAmountOut)
+    const tokenIn = wrappedCurrency(currencyIn)
     for (let i = 0; i < pairs.length; i++) {
       const pair = pairs[i]
       // pair irrelevant

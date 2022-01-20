@@ -9,11 +9,11 @@ import Router from './abis/FSN_Router.json'
 export type BigintIsh = JSBI | bigint | string
 
 export enum ChainId {
-  MAINNET = 1,
-  ROPSTEN = 3,
-  RINKEBY = 4,
-  GÖRLI = 5,
-  KOVAN = 42,
+  // MAINNET = 1,
+  // ROPSTEN = 3,
+  // RINKEBY = 4,
+  // GÖRLI = 5,
+  // KOVAN = 42,
   FSN = 1667 // 增加FSN网络ID
 }
 
@@ -35,7 +35,7 @@ export const INIT_CODE_HASH = '0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbe
 
 // export const ROUTER_ADDRESS = '0x85af5505cA753045CfCF4ab98C0bC8d4F828B1B3' // 以太坊网络
 export const ROUTER_ADDRESS = '0x2c9cF55B50ba2F773A195e038CE1FF4c529f5264' //  FSN网络
-const provider = getDefaultProvider(getNetwork(ChainId.RINKEBY));
+const provider = getDefaultProvider(getNetwork('4'));
 export const getSwapFee  = async() => {
   // 0: "3"
   // 1: "3"
@@ -43,8 +43,10 @@ export const getSwapFee  = async() => {
   // _addLiquidityFee: "3"
   // _removeLiquidityFee: "3"
   // _swapFee: "3"
-  const {_swapFee} = await new Contract(ROUTER_ADDRESS, Router.abi, provider).getFeeVal()
+  const {_swapFee, _addLiquidityFee, _removeLiquidityFee} = await new Contract(ROUTER_ADDRESS, Router.abi, provider).getFeeVal()
   console.log('_swapFee: ' + _swapFee)
+  console.log('_addLiquidityFee: ' + _addLiquidityFee)
+  console.log('_removeLiquidityFee: ' + _removeLiquidityFee)
   return _swapFee
 }
 
